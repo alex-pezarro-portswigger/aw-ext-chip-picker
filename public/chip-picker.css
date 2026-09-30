@@ -1,0 +1,20 @@
+/* Only .chip-picker-* classes: nothing here restyles core elements. */
+.chip-picker { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+
+/* Roughly a board card's width; the sample card is inert, so is its frame. */
+.chip-picker-preview {
+  width: 320px;
+  max-width: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.chip-picker-groups { display: flex; flex-direction: column; gap: 8px; }
+.chip-picker-group { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.chip-picker-group-title { font-weight: 600; padding: 0; margin-bottom: 4px; width: 100%; }
+.chip-picker-item { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.chip-picker-note { opacity: 0.6; font-style: italic; }
+
+.chip-picker-actions { display: flex; gap: 8px; }
+.chip-picker-error { color: var(--danger, #c0392b); }
+.chip-picker-error[hidden] { display: none; }

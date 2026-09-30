@@ -1,0 +1,17 @@
+{
+  "name": "aw-ext-chip-picker",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent Wrangler extension: choose which chips appear on session cards.",
+  "wranglerExtension": {
+    "id": "chip-picker",
+    "label": "Card chips",
+    "description": "Choose which chips appear on session cards, with a live preview.",
+    "requires": ["cards:hideChips"],
+    "settings": [{ "key": "hiddenChips", "type": "list", "label": "Hidden chips", "hidden": true, "maxItems": 200 }]
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
