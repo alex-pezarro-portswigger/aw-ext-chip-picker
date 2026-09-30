@@ -3,16 +3,22 @@
 
 /* Roughly a board card's width; the sample card is inert, so is its frame. */
 .chip-picker-preview {
-  width: 320px;
-  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
   pointer-events: none;
   user-select: none;
 }
 
 .chip-picker-groups { display: flex; flex-direction: column; gap: 8px; }
-.chip-picker-group { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.chip-picker-group { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
 .chip-picker-group-title { font-weight: 600; padding: 0; margin-bottom: 4px; width: 100%; }
-.chip-picker-item { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+/* Doubled class: beats the dialog's own label/input rules (which stack them). */
+.chip-picker .chip-picker-group label.chip-picker-item { display: inline-flex; flex-direction: row; align-items: center; gap: 6px; cursor: pointer; width: auto; margin: 0; padding: 0; line-height: 1; }
+.chip-picker .chip-picker-group label.chip-picker-item > input[type="checkbox"] { display: inline-block; margin: 0; width: auto; flex: none; align-self: center; }
+.chip-picker-label { display: inline-flex; align-items: center; margin-left: 2px; text-transform: none; letter-spacing: normal; }
+/* The cloned pill keeps its own look; its row wrapper only lends classes. */
+.chip-picker-swatch { display: inline-flex !important; align-items: center; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; width: auto !important; pointer-events: none; }
+.chip-picker-swatches[hidden] { display: none; }
 .chip-picker-note { opacity: 0.6; font-style: italic; }
 
 .chip-picker-actions { display: flex; gap: 8px; }

@@ -65,6 +65,10 @@ export default {
         };
         const root = el('div', 'chip-picker');
         state.preview = el('div', 'chip-picker-preview');
+        // An off-screen sample with nothing hidden: the source for each row's
+        // rendered pill, so a hidden chip still shows what it looks like.
+        state.swatches = el('div', 'chip-picker-preview chip-picker-swatches');
+        state.swatches.hidden = true;
         state.groups = el('div', 'chip-picker-groups');
         const actions = el('div', 'chip-picker-actions');
         const showAll = el('button', 'chip-picker-show-all', 'Show all');
@@ -75,6 +79,7 @@ export default {
         state.error.hidden = true;
         state.showAll = showAll;
         root.appendChild(state.preview);
+        root.appendChild(state.swatches);
         root.appendChild(state.groups);
         root.appendChild(actions);
         root.appendChild(state.error);
@@ -129,6 +134,7 @@ function build(state) {
   const ordered = [...groups].sort(([a], [b]) => (a === 'core' ? -1 : b === 'core' ? 1 : 0));
   state.boxes.clear();
   state.notes.clear();
+  state.api.cards.renderSample(state.swatches, { hidden: [] });
   const sections = ordered.map(([source, chips]) => {
     const section = el('fieldset', 'chip-picker-group');
     section.dataset.source = source;
@@ -144,8 +150,9 @@ function build(state) {
         refresh(state);
       });
       const note = el('span', 'chip-picker-note');
+      label.title = chip.label || chip.key;
       label.appendChild(box);
-      label.appendChild(el('span', 'chip-picker-label', chip.label || chip.key));
+      label.appendChild(swatch(state, chip));
       label.appendChild(note);
       section.appendChild(label);
       state.boxes.set(chip.key, { box, source: chip.source });
@@ -154,6 +161,27 @@ function build(state) {
     return section;
   });
   state.groups.replaceChildren(...sections);
+}
+
+// The chip as the sample card draws it, cloned (inert) with its parent's
+// classes so row-scoped styles still apply. Falls back to the label text.
+function swatch(state, chip) {
+  const wrap = el('span', 'chip-picker-label');
+  const node = state.swatches.querySelector(`[data-chip="${chip.key.replace(/["\\]/g, '\\$&')}"]`);
+  const drawn = node && !node.hidden && (node.textContent?.trim() || node.children?.length);
+  if (!drawn || !node.cloneNode) { wrap.textContent = chip.label || chip.key; return wrap; }
+  const ctx = el('span', `${node.parentNode?.className || ''} chip-picker-swatch`.trim());
+  // Outside the card the dialog's label styles (uppercase, muted) would leak
+  // in, so carry over the text styles the pill inherits inside the card.
+  const cs = node.parentNode && globalThis.getComputedStyle?.(node.parentNode);
+  if (cs) {
+    for (const prop of ['color', 'font-family', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'text-transform']) {
+      ctx.style.setProperty(prop, cs.getPropertyValue(prop));
+    }
+  }
+  ctx.appendChild(node.cloneNode(true));
+  wrap.appendChild(ctx);
+  return wrap;
 }
 
 // Redraw the preview from the draft, then re-sync checkboxes and notes.
